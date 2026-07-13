@@ -161,7 +161,18 @@ No scheduler/doc_events for P0.
 - New Maestro routes smoke-tested (health 200/auth flag; board-metadata 400/401). Studio compiles.
 - Bench install + real #12 run needs deployment + Maestro reachability — see `INSTALL.md`.
 
-**Deferred (P1):** bulk DocTypes (Job/Result/Prompt Library), bulk-generate, AI credits (#4/#8/#9).
+**Phase 3.1 — Metadata panel v2 (richer fields + per-image view) — ✅ DONE (2026-07-13)**
+- Frappe: `maestro/product.py` `_extra_fields(item)` — generic `{label, value}` list (stock UOM, product
+  type Template/Variant/Standalone + variant-of, variant attribute values, rate, weight, country of
+  origin, disabled status). Sent as `product.extra_fields`; no schema change needed to add more —
+  extend `_extra_fields` only.
+- Maestro: `alaiy_os_board_context.extra_fields` (jsonb) via migration `104_board_context_extra_fields.sql`,
+  threaded through `types.ts` → `board-service.ts` → `create-board`/`board-metadata` routes.
+- `MetadataPanel.tsx` redesigned with two tabs: **Product** (now shows brand/item_group as chips +
+  an "Additional details" spec table from `extra_fields`) and **Selected image** (reuses the existing
+  `useImageMetadata` hook / `/api/images/metadata/[elementId]` route to show source badge, AI prompt +
+  lineage thumbnails, or upload/import details for whichever canvas image is currently selected).
+  Selecting an image on the board auto-switches to that tab. tsc clean.
 
 ## 9. Open decision
 - Two save surfaces currently coexist in ALAIY_OS_MODE: the FloatingActionBar Save button

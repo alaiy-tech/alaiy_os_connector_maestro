@@ -35,6 +35,57 @@ def _primary_image_url(item) -> str | None:
     return get_url(item.image)
 
 
+def _extra_fields(item) -> list[dict]:
+    """
+    Additional read-only Item attributes surfaced in Maestro's metadata panel.
+
+    Each entry is ``{"label", "value"}`` and only non-empty values are kept, so
+    the panel can render them generically without knowing the ERPNext schema.
+    To show a new field, add it here — no Maestro/DB change is needed.
+    """
+    fields: list[dict] = []
+
+    def add(label: str, value) -> None:
+        if value in (None, "", 0, "0"):
+            return
+        fields.append({"label": label, "value": str(value).strip()})
+
+    # Catalogue basics
+    add("Stock UOM", item.get("stock_uom"))
+    add("Sales UOM", item.get("sales_uom"))
+
+    # Product type (template / variant / standalone) and lineage
+    if item.get("has_variants"):
+        add("Product type", "Template")
+    elif item.get("variant_of"):
+        add("Product type", "Variant")
+        add("Variant of", item.get("variant_of"))
+    else:
+        add("Product type", "Standalone")
+
+    # Variant attribute values (e.g. Color: Forest Green)
+    for row in (item.get("attributes") or []):
+        attr = row.get("attribute")
+        val = row.get("attribute_value")
+        if attr and val:
+            add(attr, val)
+
+    # Pricing (company currency; shown as-is)
+    add("Standard rate", item.get("standard_rate"))
+
+    # Physical
+    weight = item.get("weight_per_unit")
+    if weight:
+        add("Weight", f"{weight} {item.get('weight_uom') or ''}".strip())
+    add("Country of origin", item.get("country_of_origin"))
+
+    # Status
+    if item.get("disabled"):
+        add("Status", "Disabled")
+
+    return fields
+
+
 def build_product_payload(item_code: str) -> dict:
     """
     Read an ERPNext Item straight from the bench DB and shape it into the
@@ -49,4 +100,5 @@ def build_product_payload(item_code: str) -> dict:
         "brand": item.brand or None,
         "item_group": item.item_group or None,
         "primary_image_url": _primary_image_url(item),
+        "extra_fields": _extra_fields(item),
     }
