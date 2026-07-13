@@ -129,7 +129,13 @@ def bulk_generate(item_codes, prompt: str, generation_type: str, prompt_library:
         job.status = "Failed"
         job.save(ignore_permissions=True)
         frappe.db.commit()
-        frappe.throw(_("Maestro rejected the job: {0}").format(resp.get("error", "unknown")[:200]))
+        if resp.get("error") == "credits_exhausted":
+            frappe.throw(
+                _("Not enough AI credits: {0} remaining, {1} needed. Top up in Maestro Credit Account.").format(
+                    resp.get("credits_remaining", 0), resp.get("credits_needed", "?")
+                )
+            )
+        frappe.throw(_("Maestro rejected the job: {0}").format(str(resp.get("error", "unknown"))[:200]))
 
     job.reload()
     job.status = "Processing"

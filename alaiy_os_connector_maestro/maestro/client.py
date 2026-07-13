@@ -63,5 +63,15 @@ class MaestroClient:
             "callback_url": callback_url,
         }
         resp = self._post("/api/alaiy-os/bulk-generate", payload, timeout=60)
+        # Maestro answers structured JSON errors (e.g. 402 credits_exhausted
+        # with the remaining/needed counts) — surface those to the caller
+        # instead of raising on the bare HTTP status.
+        try:
+            data = resp.json()
+        except ValueError:
+            resp.raise_for_status()
+            raise RuntimeError("Maestro returned a non-JSON response")
+        if isinstance(data, dict):
+            return data
         resp.raise_for_status()
-        return resp.json()
+        return {"success": True}
