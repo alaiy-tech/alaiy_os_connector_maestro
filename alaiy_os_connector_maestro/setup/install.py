@@ -10,6 +10,8 @@ def sync_connector_registry():
     sidebar provisioning helpers — it never modifies the alaiy_os or erpnext
     apps themselves.
     """
+    _fix_settings_as_single()
+
     if not frappe.db.exists("DocType", "OS Connector Registry"):
         return
 
@@ -39,6 +41,26 @@ def sync_connector_registry():
 
     frappe.db.commit()
     _update_alaiy_os_sidebar()
+
+
+def _fix_settings_as_single():
+    """
+    Force `Maestro Connector Settings` to be a Single doctype.
+
+    Frappe's DocType JSON single flag is the `issingle` field; a JSON that only
+    carries `is_single` leaves the doctype created as a normal (multi-record)
+    doctype, and Frappe blocks flipping single-ness through the ORM/migrate. A
+    raw UPDATE is the supported workaround (same pattern as the Shopify
+    connector). Idempotent — only touches the row when it's not already single.
+    """
+    if not frappe.db.exists("DocType", "Maestro Connector Settings"):
+        return
+    frappe.db.sql(
+        "UPDATE `tabDocType` SET issingle=1 "
+        "WHERE name='Maestro Connector Settings' AND issingle=0"
+    )
+    frappe.db.commit()
+    frappe.clear_cache(doctype="Maestro Connector Settings")
 
 
 def _update_alaiy_os_sidebar():
