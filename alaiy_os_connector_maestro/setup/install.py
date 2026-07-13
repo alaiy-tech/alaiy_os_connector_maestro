@@ -11,6 +11,7 @@ def sync_connector_registry():
     apps themselves.
     """
     _fix_settings_as_single()
+    _seed_prompt_library()
 
     if not frappe.db.exists("DocType", "OS Connector Registry"):
         return
@@ -45,22 +46,80 @@ def sync_connector_registry():
 
 def _fix_settings_as_single():
     """
-    Force `Maestro Connector Settings` to be a Single doctype.
+    Force our singleton doctypes to actually be Singles.
 
     Frappe's DocType JSON single flag is the `issingle` field; a JSON that only
     carries `is_single` leaves the doctype created as a normal (multi-record)
     doctype, and Frappe blocks flipping single-ness through the ORM/migrate. A
     raw UPDATE is the supported workaround (same pattern as the Shopify
-    connector). Idempotent — only touches the row when it's not already single.
+    connector). Idempotent — only touches rows that aren't already single.
     """
-    if not frappe.db.exists("DocType", "Maestro Connector Settings"):
-        return
-    frappe.db.sql(
-        "UPDATE `tabDocType` SET issingle=1 "
-        "WHERE name='Maestro Connector Settings' AND issingle=0"
-    )
+    for doctype in ("Maestro Connector Settings", "Maestro Credit Account"):
+        if not frappe.db.exists("DocType", doctype):
+            continue
+        frappe.db.sql(
+            "UPDATE `tabDocType` SET issingle=1 WHERE name=%s AND issingle=0",
+            (doctype,),
+        )
+        frappe.clear_cache(doctype=doctype)
     frappe.db.commit()
-    frappe.clear_cache(doctype="Maestro Connector Settings")
+
+
+DEFAULT_PROMPTS = [
+    {
+        "prompt_name": "White Studio BG",
+        "generation_type": "Background Replace",
+        "prompt_text": (
+            "Replace the background with a clean seamless white studio backdrop. "
+            "Keep the product, its colours, proportions and shadows exactly as they are."
+        ),
+    },
+    {
+        "prompt_name": "Outdoor Lifestyle",
+        "generation_type": "Lifestyle Shot",
+        "prompt_text": (
+            "Place the product in a bright natural outdoor lifestyle setting with soft "
+            "daylight. Keep the product unchanged and photorealistic."
+        ),
+    },
+    {
+        "prompt_name": "Flat Lay Marble",
+        "generation_type": "Lifestyle Shot",
+        "prompt_text": (
+            "Photograph the product as a flat lay on a white marble surface, shot from "
+            "above with soft even lighting. Keep the product unchanged."
+        ),
+    },
+    {
+        "prompt_name": "On-Model Lifestyle",
+        "generation_type": "Lifestyle Shot",
+        "prompt_text": (
+            "Show the product in use in a realistic lifestyle scene with a model, "
+            "natural pose and lighting. Keep the product design unchanged."
+        ),
+    },
+]
+
+
+def _seed_prompt_library():
+    """Seed the 4 default Prompt Library entries (issue #7). Insert-only —
+    never overwrites operator edits; is_default marks them as seeds."""
+    if not frappe.db.exists("DocType", "Maestro Prompt Library"):
+        return
+    try:
+        for seed in DEFAULT_PROMPTS:
+            if frappe.db.exists("Maestro Prompt Library", seed["prompt_name"]):
+                continue
+            doc = frappe.new_doc("Maestro Prompt Library")
+            doc.update(seed)
+            doc.is_default = 1
+            doc.insert(ignore_permissions=True)
+        frappe.db.commit()
+    except Exception:
+        frappe.log_error(
+            title="Maestro connector: prompt seeding failed",
+            message=frappe.get_traceback(),
+        )
 
 
 def _update_alaiy_os_sidebar():

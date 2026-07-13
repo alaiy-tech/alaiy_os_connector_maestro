@@ -1,0 +1,74 @@
+{
+  "actions": [],
+  "creation": "2026-07-13 00:00:00.000000",
+  "docstatus": 0,
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "total_credits",
+    "used_credits",
+    "remaining_credits",
+    "cb_reset",
+    "reset_date"
+  ],
+  "fields": [
+    {
+      "default": "0",
+      "description": "Credits allocated to this site (set on plan activation; admin can top up here).",
+      "fieldname": "total_credits",
+      "fieldtype": "Int",
+      "label": "Total Credits"
+    },
+    {
+      "default": "0",
+      "fieldname": "used_credits",
+      "fieldtype": "Int",
+      "label": "Used Credits",
+      "read_only": 1
+    },
+    {
+      "default": "0",
+      "fieldname": "remaining_credits",
+      "fieldtype": "Int",
+      "label": "Remaining Credits",
+      "read_only": 1
+    },
+    {
+      "fieldname": "cb_reset",
+      "fieldtype": "Column Break"
+    },
+    {
+      "description": "When the monthly allocation resets (informational in v1).",
+      "fieldname": "reset_date",
+      "fieldtype": "Date",
+      "label": "Reset Date"
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "issingle": 1,
+  "links": [],
+  "modified": "2026-07-13 00:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Alaiy OS Connector Maestro",
+  "name": "Maestro Credit Account",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "creation",
+  "sort_order": "DESC",
+  "states": [],
+  "track_changes": 1
+}

@@ -47,3 +47,21 @@ class MaestroClient:
         resp = self._post("/api/alaiy-os/create-board", payload, timeout=60)
         resp.raise_for_status()
         return resp.json()
+
+    def bulk_generate(self, job_id, prompt, generation_type, products, callback_url):
+        """
+        Submit a bulk-generation job. Maestro answers 202 immediately and
+        reports per-product results to `callback_url` (bulk_result) as they
+        complete. Returns the parsed 202 body.
+        """
+        payload = {
+            "api_key": self.api_key,
+            "job_id": job_id,
+            "prompt": prompt,
+            "generation_type": generation_type,
+            "products": products,
+            "callback_url": callback_url,
+        }
+        resp = self._post("/api/alaiy-os/bulk-generate", payload, timeout=60)
+        resp.raise_for_status()
+        return resp.json()

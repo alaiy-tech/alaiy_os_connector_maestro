@@ -1,0 +1,165 @@
+{
+  "actions": [],
+  "autoname": "field:job_id",
+  "creation": "2026-07-13 00:00:00.000000",
+  "docstatus": 0,
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "job_id",
+    "status",
+    "generation_type",
+    "cb_meta",
+    "submitted_by",
+    "submitted_at",
+    "completed_at",
+    "sb_prompt",
+    "prompt_used",
+    "sb_progress",
+    "product_count",
+    "completed_count",
+    "failed_count",
+    "sb_review",
+    "review_html",
+    "sb_results",
+    "results"
+  ],
+  "fields": [
+    {
+      "fieldname": "job_id",
+      "fieldtype": "Data",
+      "label": "Job ID",
+      "read_only": 1,
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "default": "Queued",
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "label": "Status",
+      "options": "Queued\nProcessing\nDone\nFailed"
+    },
+    {
+      "fieldname": "generation_type",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "label": "Generation Type",
+      "options": "Background Replace\nColour Variant\nLifestyle Shot"
+    },
+    {
+      "fieldname": "cb_meta",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "submitted_by",
+      "fieldtype": "Link",
+      "in_list_view": 1,
+      "label": "Submitted By",
+      "options": "User",
+      "read_only": 1
+    },
+    {
+      "fieldname": "submitted_at",
+      "fieldtype": "Datetime",
+      "label": "Submitted At",
+      "read_only": 1
+    },
+    {
+      "fieldname": "completed_at",
+      "fieldtype": "Datetime",
+      "label": "Completed At",
+      "read_only": 1
+    },
+    {
+      "collapsible": 1,
+      "fieldname": "sb_prompt",
+      "fieldtype": "Section Break",
+      "label": "Prompt"
+    },
+    {
+      "fieldname": "prompt_used",
+      "fieldtype": "Small Text",
+      "label": "Prompt Used",
+      "read_only": 1
+    },
+    {
+      "fieldname": "sb_progress",
+      "fieldtype": "Section Break",
+      "label": "Progress"
+    },
+    {
+      "default": "0",
+      "fieldname": "product_count",
+      "fieldtype": "Int",
+      "in_list_view": 1,
+      "label": "Products",
+      "read_only": 1
+    },
+    {
+      "default": "0",
+      "fieldname": "completed_count",
+      "fieldtype": "Int",
+      "label": "Completed",
+      "read_only": 1
+    },
+    {
+      "default": "0",
+      "fieldname": "failed_count",
+      "fieldtype": "Int",
+      "label": "Failed",
+      "read_only": 1
+    },
+    {
+      "fieldname": "sb_review",
+      "fieldtype": "Section Break",
+      "label": "Review"
+    },
+    {
+      "fieldname": "review_html",
+      "fieldtype": "HTML",
+      "label": "Review Grid"
+    },
+    {
+      "collapsible": 1,
+      "fieldname": "sb_results",
+      "fieldtype": "Section Break",
+      "label": "Results"
+    },
+    {
+      "fieldname": "results",
+      "fieldtype": "Table",
+      "label": "Results",
+      "options": "Maestro Generation Result"
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-07-13 00:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Alaiy OS Connector Maestro",
+  "name": "Maestro Generation Job",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "creation",
+  "sort_order": "DESC",
+  "states": [],
+  "track_changes": 1
+}

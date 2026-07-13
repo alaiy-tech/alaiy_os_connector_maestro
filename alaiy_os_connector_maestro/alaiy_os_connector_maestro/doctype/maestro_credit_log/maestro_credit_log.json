@@ -1,0 +1,83 @@
+{
+  "actions": [],
+  "autoname": "hash",
+  "creation": "2026-07-13 00:00:00.000000",
+  "docstatus": 0,
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "timestamp",
+    "operation",
+    "credits_used",
+    "cb_ref",
+    "item_code",
+    "job_id"
+  ],
+  "fields": [
+    {
+      "fieldname": "timestamp",
+      "fieldtype": "Datetime",
+      "in_list_view": 1,
+      "label": "Timestamp",
+      "read_only": 1
+    },
+    {
+      "fieldname": "operation",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "label": "Operation",
+      "options": "Background Replace\nColour Variant\nLifestyle Shot\nOther"
+    },
+    {
+      "default": "1",
+      "fieldname": "credits_used",
+      "fieldtype": "Int",
+      "in_list_view": 1,
+      "label": "Credits Used"
+    },
+    {
+      "fieldname": "cb_ref",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "item_code",
+      "fieldtype": "Link",
+      "in_list_view": 1,
+      "label": "Item",
+      "options": "Item"
+    },
+    {
+      "fieldname": "job_id",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "label": "Maestro Job ID"
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-07-13 00:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Alaiy OS Connector Maestro",
+  "name": "Maestro Credit Log",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "creation",
+  "sort_order": "DESC",
+  "states": [],
+  "track_changes": 0
+}

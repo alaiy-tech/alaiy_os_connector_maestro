@@ -1,0 +1,114 @@
+{
+  "actions": [],
+  "creation": "2026-07-13 00:00:00.000000",
+  "docstatus": 0,
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "item_code",
+    "item_name",
+    "status",
+    "cb_images",
+    "source_image_url",
+    "generated_image_url",
+    "generated_image_file",
+    "sb_save",
+    "save_mode",
+    "variant_name",
+    "variant_attribute",
+    "error_message"
+  ],
+  "fields": [
+    {
+      "fieldname": "item_code",
+      "fieldtype": "Link",
+      "in_list_view": 1,
+      "label": "Item",
+      "options": "Item",
+      "reqd": 1
+    },
+    {
+      "fieldname": "item_name",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "label": "Item Name"
+    },
+    {
+      "default": "Queued",
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "label": "Status",
+      "options": "Queued\nPending Review\nAccepted\nDiscarded\nSaved\nFailed"
+    },
+    {
+      "fieldname": "cb_images",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "source_image_url",
+      "fieldtype": "Data",
+      "label": "Source Image URL",
+      "read_only": 1
+    },
+    {
+      "fieldname": "generated_image_url",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "label": "Generated Image URL",
+      "read_only": 1
+    },
+    {
+      "fieldname": "generated_image_file",
+      "fieldtype": "Link",
+      "label": "Generated Image File",
+      "options": "File",
+      "read_only": 1
+    },
+    {
+      "fieldname": "sb_save",
+      "fieldtype": "Section Break",
+      "label": "Save Options"
+    },
+    {
+      "default": "Add to Product",
+      "fieldname": "save_mode",
+      "fieldtype": "Select",
+      "label": "Save Mode",
+      "options": "Add to Product\nCreate Variant"
+    },
+    {
+      "depends_on": "eval:doc.save_mode=='Create Variant'",
+      "fieldname": "variant_name",
+      "fieldtype": "Data",
+      "label": "Variant Name"
+    },
+    {
+      "default": "Color",
+      "depends_on": "eval:doc.save_mode=='Create Variant'",
+      "fieldname": "variant_attribute",
+      "fieldtype": "Data",
+      "label": "Variant Attribute"
+    },
+    {
+      "fieldname": "error_message",
+      "fieldtype": "Small Text",
+      "label": "Error",
+      "read_only": 1
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "istable": 1,
+  "links": [],
+  "modified": "2026-07-13 00:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Alaiy OS Connector Maestro",
+  "name": "Maestro Generation Result",
+  "owner": "Administrator",
+  "permissions": [],
+  "sort_field": "creation",
+  "sort_order": "DESC",
+  "states": [],
+  "track_changes": 0
+}

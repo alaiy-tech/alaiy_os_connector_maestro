@@ -174,6 +174,63 @@ No scheduler/doc_events for P0.
   lineage thumbnails, or upload/import details for whichever canvas image is currently selected).
   Selecting an image on the board auto-switches to that tab. tsc clean.
 
+**Phase 6 — P1 issues: bulk generation + credits + audit — ✅ CODE COMPLETE (2026-07-13)**
+
+*#7 remaining DocTypes + #9 credit DocTypes (Frappe):*
+- `Maestro Prompt Library` (autoname field:prompt_name; usage_count bumped via `bump_usage`),
+  `Maestro Generation Job` (autoname field:job_id; status Queued/Processing/Done/Failed; counters;
+  `review_html` field + child `results` table), `Maestro Generation Result` (child; status
+  Queued/Pending Review/Accepted/Discarded/Saved/Failed; save_mode + variant fields),
+  `Maestro Credit Account` (Single — proper `issingle` AND covered defensively by the
+  `_fix_settings_as_single` SQL patch; remaining always derived in validate), `Maestro Credit Log`.
+- 4 default prompts seeded insert-only from `_seed_prompt_library()` (after_migrate): White Studio BG,
+  Outdoor Lifestyle, Flat Lay Marble, On-Model Lifestyle.
+
+*#9 credit endpoints (Frappe `api/credits.py`):*
+- `get_credit_balance` / `deduct_credits` — allow_guest POSTs validated with the SAME canonical-JSON
+  HMAC as receive_image. deduct writes a Credit Log row (best-effort) and returns remaining.
+
+*#4 bulk-generate (Maestro):*
+- `POST /api/alaiy-os/bulk-generate` — api_key auth, validates job_id/prompt/type/products (max 25),
+  responds **202** and processes via Next 16 `after()` background work (`maxDuration 300`).
+- `lib/alaiy-os/bulk-generation.ts` — pLimit(3); per product: fetch source → Gemini generate
+  (1 image, 1:1, 1K, domain ecommerce) → upload to `moodboard-images` under
+  `<service-user>/alaiy-os-bulk/<job_id>/` → signed `done`/`failed` callback → final `all_done`.
+- **DEVIATION from issue #4:** all three generation types run through the one Gemini pipeline with
+  type-specific prompt wrappers (background_replace / colour_variant / lifestyle_shot) instead of
+  fanning out to /api/remove-bg / /api/color-variants internally — one code path, no route-to-route
+  HTTP inside the serverless fn. Revisit if Modal bg-removal quality is needed for bulk.
+
+*#5 credit enforcement (Maestro `lib/alaiy-os/credits.ts`):*
+- Costs: background_replace 1, colour_variant 1, lifestyle_shot 2. Whole-batch check up front →
+  402 `credits_exhausted` (fail fast); per-success `deduct_credits` (best-effort).
+- **Fail-open** when the balance endpoint is unreachable (connector app not migrated yet) — credits
+  are an Alaiy OS policy, not a Maestro safety rail. Flip to fail-closed later if needed.
+
+*#8 bulk UI (Frappe):*
+- `public/js/item_list.js` (`doctype_list_js`) — "Generate Images (Maestro)" bulk action; dialog with
+  Prompt Library link (auto-fills prompt+type), free-text prompt, type select, selected-items preview;
+  submits to `api/bulk_generate.bulk_generate` (session-auth) → creates Job first, then calls Maestro;
+  items without an image are skipped and reported.
+- `api/bulk_generate.bulk_result` — HMAC-validated allow_guest callback; updates child row
+  (done→Pending Review + image URL, failed→Failed + error), bumps counters; `all_done` closes the job
+  (Done if ≥1 success, else Failed).
+- Job form (`maestro_generation_job.js`) — before/after review grid in `review_html`, Accept/Discard
+  per result (`set_result_status`), "Save Accepted (n)" button → `save_accepted` reuses image_save
+  (attach or variant per row save_mode) and marks rows Saved.
+- hooks: `doctype_list_js` for Item + "Maestro Jobs" sidebar log link.
+
+*#6 secrets audit (Maestro):*
+- Grep clean: no hardcoded keys/secrets/internal URLs in `lib/alaiy-os`, `app/api/alaiy-os`,
+  `components/alaiy-os`; the shared key exists only in `.env.local`/Vercel env + bench settings.
+- `alaiy_os_board_context` only read via service-role `readBoardContext`; the sole route exposing any
+  of it (`board-metadata`) whitelists non-secret fields — callback_url/callback_token never serialised.
+- `.env.example` now documents ALAIY_OS_* vars (placeholders only): NEXT_PUBLIC_ALAIY_OS_MODE,
+  ALAIY_OS_CONNECTOR_API_KEY, ALAIY_OS_SERVICE_USER_ID, SUPABASE_SERVICE_ROLE_KEY, NEXT_PUBLIC_SITE_URL.
+
+*Not run yet:* bench migrate for the new DocTypes; live bulk e2e test; GitHub issue comments
+intentionally NOT posted yet (per user).
+
 ## 9. Open decision
 - Two save surfaces currently coexist in ALAIY_OS_MODE: the FloatingActionBar Save button
   (`SaveToAlaiyOsPanel`) and the new Metadata panel. Both POST to `/api/alaiy-os/save-image`.
