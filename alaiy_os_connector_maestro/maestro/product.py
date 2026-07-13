@@ -3,8 +3,12 @@ from frappe.utils import get_url
 
 
 def _plain_description(item) -> str | None:
-    """Item.description is stored as HTML; the Metadata panel wants plain text."""
-    raw = item.description or item.web_long_description or ""
+    """Item.description is stored as HTML; the Metadata panel wants plain text.
+
+    Read fields with .get() — `web_long_description` isn't present on Item in
+    every ERPNext version, and attribute access would raise AttributeError.
+    """
+    raw = item.get("description") or item.get("web_long_description") or ""
     if not raw:
         return None
     try:
