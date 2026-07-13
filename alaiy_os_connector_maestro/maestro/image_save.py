@@ -84,18 +84,28 @@ def create_item_variant_with_image(
 
 # ── ERPNext-native variant path ────────────────────────────────────────────
 
+def _abbr(value: str) -> str:
+    """
+    Unique-per-value abbreviation used in the variant's item_code. Must not
+    collide across values, so use the full slug (e.g. "forest-green"), not a
+    truncated prefix — "Forest Green" and "Forest Gray" would otherwise both
+    abbreviate to the same 8 chars and ERPNext would reject the second variant.
+    """
+    return _slug(value)
+
+
 def _ensure_attribute(attribute: str, value: str) -> None:
     """Ensure an Item Attribute exists and includes the given value."""
     if not frappe.db.exists("Item Attribute", attribute):
         attr = frappe.new_doc("Item Attribute")
         attr.attribute_name = attribute
-        attr.append("item_attribute_values", {"attribute_value": value, "abbr": _slug(value)[:8]})
+        attr.append("item_attribute_values", {"attribute_value": value, "abbr": _abbr(value)})
         attr.insert(ignore_permissions=True)
         return
 
     attr = frappe.get_doc("Item Attribute", attribute)
     if not any((v.attribute_value or "").lower() == value.lower() for v in attr.item_attribute_values):
-        attr.append("item_attribute_values", {"attribute_value": value, "abbr": _slug(value)[:8]})
+        attr.append("item_attribute_values", {"attribute_value": value, "abbr": _abbr(value)})
         attr.save(ignore_permissions=True)
 
 
