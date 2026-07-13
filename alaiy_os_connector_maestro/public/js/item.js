@@ -24,12 +24,18 @@ frappe.ui.form.on("Item", {
             win.document.write(
               '<!doctype html><meta charset="utf-8"><title>Opening Maestro…</title>' +
                 '<style>html,body{height:100%;margin:0}body{display:flex;flex-direction:column;' +
-                "align-items:center;justify-content:center;gap:18px;font-family:-apple-system," +
-                'system-ui,sans-serif;color:#333;background:#fafafa}' +
-                ".s{width:34px;height:34px;border:3px solid #e5e5e5;border-top-color:#111;" +
-                "border-radius:50%;animation:r .8s linear infinite}" +
-                "@keyframes r{to{transform:rotate(360deg)}}</style>" +
-                '<div class="s"></div><p>Opening Maestro…</p>',
+                "align-items:center;justify-content:center;gap:22px;font-family:-apple-system," +
+                'system-ui,sans-serif;color:#6b7280;background:#fafafa}' +
+                ".dots{display:flex;gap:10px}" +
+                ".dots span{width:12px;height:12px;border-radius:50%;background:#f43f5e;" +
+                "display:inline-block;animation:b 1s ease-in-out infinite}" +
+                ".dots span:nth-child(2){animation-delay:.15s}" +
+                ".dots span:nth-child(3){animation-delay:.3s}" +
+                ".dots span:nth-child(4){animation-delay:.45s}" +
+                "@keyframes b{0%,100%{opacity:.3;transform:translateY(0)}" +
+                "50%{opacity:1;transform:translateY(-6px)}}</style>" +
+                '<div class="dots"><span></span><span></span><span></span><span></span></div>' +
+                "<p>Opening Maestro…</p>",
             );
             win.document.close();
           }
