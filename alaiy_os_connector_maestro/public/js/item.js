@@ -12,6 +12,13 @@ frappe.ui.form.on("Item", {
         if (!frm.doc.image) return;
 
         frm.add_custom_button(__("Open in Maestro"), () => {
+          // Open the tab synchronously, inside the click gesture, so popup
+          // blockers (Brave/Chrome) don't kill it — create-board is async and
+          // opening the tab in its callback would be treated as a non-user
+          // action and silently blocked. We point the already-open tab at the
+          // studio URL once the response arrives.
+          const win = window.open("about:blank", "_blank");
+
           frappe.call({
             method:
               "alaiy_os_connector_maestro.api.open_in_maestro.open_in_maestro",
@@ -21,10 +28,15 @@ frappe.ui.form.on("Item", {
             callback(r) {
               const res = r.message || {};
               if (res.studio_url) {
-                window.open(res.studio_url, "_blank", "noopener");
+                if (win) win.location.href = res.studio_url;
+                else window.open(res.studio_url, "_blank"); // popup was blocked; retry
               } else {
+                if (win) win.close();
                 frappe.msgprint(__("Could not open Maestro."));
               }
+            },
+            error() {
+              if (win) win.close();
             },
           });
         });
