@@ -18,6 +18,21 @@ frappe.ui.form.on("Item", {
           // action and silently blocked. We point the already-open tab at the
           // studio URL once the response arrives.
           const win = window.open("about:blank", "_blank");
+          if (win) {
+            // Board creation takes a few seconds (image upload + login link);
+            // show a loader instead of a blank tab while we wait.
+            win.document.write(
+              '<!doctype html><meta charset="utf-8"><title>Opening Maestro…</title>' +
+                '<style>html,body{height:100%;margin:0}body{display:flex;flex-direction:column;' +
+                "align-items:center;justify-content:center;gap:18px;font-family:-apple-system," +
+                'system-ui,sans-serif;color:#333;background:#fafafa}' +
+                ".s{width:34px;height:34px;border:3px solid #e5e5e5;border-top-color:#111;" +
+                "border-radius:50%;animation:r .8s linear infinite}" +
+                "@keyframes r{to{transform:rotate(360deg)}}</style>" +
+                '<div class="s"></div><p>Opening Maestro…</p>',
+            );
+            win.document.close();
+          }
 
           frappe.call({
             method:
