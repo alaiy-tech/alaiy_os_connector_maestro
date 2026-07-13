@@ -1,0 +1,2 @@
+# Patches for alaiy_os_connector_maestro.
+# Format: module.path.to.patch (one per line).

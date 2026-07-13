@@ -1,0 +1,80 @@
+{
+  "creation": "2026-07-10 00:00:00.000000",
+  "docstatus": 0,
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "enabled",
+    "sb_connection",
+    "maestro_base_url",
+    "api_key",
+    "sb_defaults",
+    "default_generation_type"
+  ],
+  "fields": [
+    {
+      "default": "0",
+      "fieldname": "enabled",
+      "fieldtype": "Check",
+      "label": "Enable Maestro"
+    },
+    {
+      "fieldname": "sb_connection",
+      "fieldtype": "Section Break",
+      "label": "Connection"
+    },
+    {
+      "description": "Base URL of the Maestro app, e.g. https://maestro.alaiy.com (no trailing slash needed).",
+      "fieldname": "maestro_base_url",
+      "fieldtype": "Data",
+      "label": "Maestro Base URL",
+      "reqd": 1
+    },
+    {
+      "description": "Shared secret. Must match ALAIY_OS_CONNECTOR_API_KEY in the Maestro app. Used for server-to-server auth and to sign save-back callbacks.",
+      "fieldname": "api_key",
+      "fieldtype": "Password",
+      "label": "API Key",
+      "reqd": 1
+    },
+    {
+      "fieldname": "sb_defaults",
+      "fieldtype": "Section Break",
+      "label": "Defaults"
+    },
+    {
+      "default": "Lifestyle Shot",
+      "description": "Pre-selected generation type in the bulk panel (used by the P1 bulk flow).",
+      "fieldname": "default_generation_type",
+      "fieldtype": "Select",
+      "label": "Default Generation Type",
+      "options": "Background Replace\nColour Variant\nLifestyle Shot"
+    }
+  ],
+  "is_single": 1,
+  "links": [],
+  "modified": "2026-07-10 00:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Alaiy OS Connector Maestro",
+  "name": "Maestro Connector Settings",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": [],
+  "track_changes": 0
+}

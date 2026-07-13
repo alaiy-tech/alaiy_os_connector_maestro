@@ -1,0 +1,2 @@
+include requirements.txt
+recursive-include alaiy_os_connector_maestro *.js *.json *.css *.html
