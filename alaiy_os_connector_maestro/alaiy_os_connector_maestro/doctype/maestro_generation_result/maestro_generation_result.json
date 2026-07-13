@@ -48,13 +48,13 @@
     },
     {
       "fieldname": "source_image_url",
-      "fieldtype": "Data",
+      "fieldtype": "Small Text",
       "label": "Source Image URL",
       "read_only": 1
     },
     {
       "fieldname": "generated_image_url",
-      "fieldtype": "Data",
+      "fieldtype": "Small Text",
       "in_list_view": 1,
       "label": "Generated Image URL",
       "read_only": 1
