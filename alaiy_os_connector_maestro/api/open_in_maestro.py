@@ -68,12 +68,16 @@ def open_in_maestro(item_code: str) -> dict:
     if not studio_url:
         frappe.throw(_("Maestro did not return a studio URL."))
 
-    _record_session(item_code, board_id, operator_email)
+    # opened_by is a Link → User, validated against the User's name (login id),
+    # NOT the email field. Pass frappe.session.user (always a valid User link);
+    # operator_email is the resolved email address, which may differ from the
+    # login id and would fail the link check.
+    _record_session(item_code, board_id, frappe.session.user)
 
     return {"studio_url": studio_url, "board_id": board_id}
 
 
-def _record_session(item_code: str, board_id: str, operator_email: str) -> None:
+def _record_session(item_code: str, board_id: str, opened_by: str) -> None:
     """Create an audit row for this open. Skipped if the doctype isn't installed yet."""
     if not frappe.db.exists("DocType", "Maestro Item Session"):
         return
@@ -81,7 +85,7 @@ def _record_session(item_code: str, board_id: str, operator_email: str) -> None:
         doc = frappe.new_doc("Maestro Item Session")
         doc.item_code = item_code
         doc.board_id = board_id
-        doc.opened_by = operator_email
+        doc.opened_by = opened_by
         doc.opened_at = frappe.utils.now_datetime()
         doc.insert(ignore_permissions=True)
         frappe.db.commit()
